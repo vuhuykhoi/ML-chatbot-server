@@ -17,7 +17,7 @@ from flask import Flask, jsonify, request
 #deploy
 import os
 
-with open("intents.json") as file:
+with open("intents_v2.json") as file:
     data = json.load(file)
 
 try:
@@ -82,7 +82,8 @@ net = tflearn.fully_connected(net, len(output[0]), activation="softmax")
 net = tflearn.regression(net)
 
 model = tflearn.DNN(net)
-
+#model.fit(training, output, n_epoch=1000, batch_size=8, show_metric=True)
+#model.save("model.tflearn")
 try:
     model.load("model.tflearn")
 except:
@@ -113,9 +114,7 @@ def chat():
         results = model.predict([bag_of_words(inp, words)])
         results_index = numpy.argmax(results)
         tag = labels[results_index]
-        #print(results)
-        #print(results_index)
-        #if results[results_index] > 0.7:
+        
         for tg in data["intents"]:
             if tg['tag'] == tag:
                 responses = tg['responses']
@@ -123,7 +122,7 @@ def chat():
         print(random.choice(responses))
         #else:
         #    print("I didn't get that, try again.")
-
+#chat()
 
 #Server:(Client run in rupyter)
 # load model
